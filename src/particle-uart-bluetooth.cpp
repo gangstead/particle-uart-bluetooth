@@ -23,29 +23,13 @@ void setup() {
   Serial4.begin(9600);
   delay(2000);
   Serial.println("starting up");
-  Serial4.println("AT");
 }
 
-int writeDelay = 0;
 void loop() {
-  if (writeDelay > 0) {
-    if (--writeDelay == 0) {
-      sendBuf[sendBufOffset] = 0;
-      Serial.printlnf("\nCommand Sent (%s)", sendBuf);
-      Serial4.println(sendBuf);
-      for(int i = 0; i < SEND_BUF_SIZE; i++) sendBuf[i] = 0;
-      sendBufOffset = 0;
-    }
-    delay(100);
-    Serial.println("swg");
-  }
-  serialEvent();
 }
 
 void serialEvent() {
-  // Serial.println("swg byte");
   while (Serial.available() > 0) {
-    Serial.printlnf("swg byte");
     int byte = Serial.read();
     Serial.write(byte);
     if ((char)byte == '\r') {
@@ -54,7 +38,6 @@ void serialEvent() {
       Serial4.println(sendBuf);
       // for(int i = 0; i < SEND_BUF_SIZE; i++) sendBuf[i] = 0;
       sendBufOffset = 0;
-      writeDelay = 50;
     } else {
       // Serial.write(byte);
       sendBuf[sendBufOffset++] = byte;
@@ -67,7 +50,6 @@ void serialEvent() {
 }
 void serialEvent4() {
   while (Serial4.available() > 0) {
-    Serial.println("byte from 4");
     Serial.write(Serial4.read());
   };
 }

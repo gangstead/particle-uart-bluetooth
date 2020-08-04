@@ -14,31 +14,19 @@ void setup() {
   Serial.println("starting up");
 }
 
-int writeDelay = 0;
 void loop() {
-  if (writeDelay > 0) {
-    if (--writeDelay == 0) {
-      sendBuf[sendBufOffset] = 0;
-      Serial.printlnf("\nCommand Sent (%s)", sendBuf);
-      Serial4.println(sendBuf);
-      for(int i = 0; i < SEND_BUF_SIZE; i++) sendBuf[i] = 0;
-      sendBufOffset = 0;
-    }
-    delay(100);
-  }
 }
 
 void serialEvent() {
   while (Serial.available() > 0) {
     int byte = Serial.read();
     Serial.write(byte);
-    if ((char)byte == '\n') {
+    if ((char)byte == '\r') {
       sendBuf[sendBufOffset] = 0;
       Serial.printlnf("\nCommand Sent (%s)\n", sendBuf);
       Serial4.println(sendBuf);
       // for(int i = 0; i < SEND_BUF_SIZE; i++) sendBuf[i] = 0;
       sendBufOffset = 0;
-      writeDelay = 50;
     } else {
       // Serial.write(byte);
       sendBuf[sendBufOffset++] = byte;
